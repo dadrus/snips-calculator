@@ -39,6 +39,8 @@ def action_wrapper(hermes, intentMessage, conf):
     _LOGGER.warn("Simple warn message")
     _LOGGER.debug(intentMessage)
 
+    print ('[Received] intent: {}'.format(intentMessage.intent.intent_name))
+
     A = int(intentMessage.slots.NumberOne.first().value)
     B = int(intentMessage.slots.NumberTwo.first().value)
     
