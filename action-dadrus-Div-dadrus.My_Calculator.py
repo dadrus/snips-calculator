@@ -6,9 +6,12 @@ from hermes_python.hermes import Hermes
 from hermes_python.ffi.utils import MqttOptions
 from hermes_python.ontology import *
 import io
+import logging
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
+
+logger = logging.getLogger('div')
 
 class SnipsConfigParser(configparser.SafeConfigParser):
     def to_dict(self):
@@ -30,7 +33,8 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    print(intentMessage)
+    logger.debug("Simple log message")
+    logger.debug(intentMessage)
 
     A = int(intentMessage.slots.NumberOne.first().value)
     B = int(intentMessage.slots.NumberTwo.first().value)
