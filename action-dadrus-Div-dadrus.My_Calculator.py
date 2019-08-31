@@ -54,7 +54,11 @@ def action_wrapper(hermes, intent_message, conf):
     if(intent_message.custom_data):
         interaction_data = json.loads(intent_message.custom_data)
 
-    request_count = interaction_data['request_count'] or 0
+
+    request_count = 0
+    if(interaction_data):
+        request_count = interaction_data['request_count']
+    
     if request_count > 3:
         hermes.publish_end_session(current_session_id, "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
         return
