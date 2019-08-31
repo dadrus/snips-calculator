@@ -32,9 +32,18 @@ def subscribe_intent_callback(hermes, intent_message):
     action_wrapper(hermes, intent_message, conf)
 
 
-def action_wrapper(hermes, intent_message, conf):
-    print ('[Received] intent: {}'.format(intent_message.intent.intent_name))
+def action_wrapper(hermes, intent_message, conf): 
     print ('[Received] intent: {}'.format(intent_message))
+    print ('[Received] intent: {}'.format(intent_message.session_id))
+    print ('[Received] intent: {}'.format(intent_message.customer_data))
+    print ('[Received] intent: {}'.format(intent_message.site_id))
+    print ('[Received] intent: {}'.format(intent_message.input))
+    print ('[Received] intent: {}'.format(intent_message.intent))
+    print ('[Received] intent: {}'.format(intent_message.intent.intent_name))
+    print ('[Received] intent: {}'.format(intent_message.intent.confidence_score))
+    print ('[Received] intent: {}'.format(intent_message.slots))
+    print ('[Received] intent: {}'.format(intent_message.asr_tokens))
+    print ('[Received] intent: {}'.format(intent_message.asr_confidence))
 
     A = int(intent_message.slots.NumberOne.first().value)
     B = int(intent_message.slots.NumberTwo.first().value)
