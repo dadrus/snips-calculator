@@ -34,15 +34,15 @@ def subscribe_intent_callback(hermes, intent_message):
 
 def action_wrapper(hermes, intent_message, conf): 
     print ("Intent Message {}".format(intent_message.__dict__))
-    #print ('[Received] intent: {}'.format(intent_message))
-    #print ('[Received] intent: {}'.format(intent_message.session_id))
-    #print ('[Received] intent: {}'.format(intent_message.custom_data))
-    #print ('[Received] intent: {}'.format(intent_message.site_id))
-    #print ('[Received] intent: {}'.format(intent_message.input))
+    print ('Intent Message intent: {}'.format(intent_message.intent.__dict__))
+    print ('Intent Message slots: {}'.format(intent_message.slots.__dict__))
+    print ('Intent Message site id: {}'.format(intent_message.site_id))
+    print ('Intent Message session id: {}'.format(intent_message.session_id))
+    print ('Intent Message input: {}'.format(intent_message.input))
+    print ('Intent Message custom data: {}'.format(intent_message.custom_data))
     #print ('[Received] intent: {}'.format(intent_message.intent))
     #print ('[Received] intent: {}'.format(intent_message.intent.intent_name))
     #print ('[Received] intent: {}'.format(intent_message.intent.confidence_score))
-    #print ('[Received] intent: {}'.format(intent_message.slots))
     #print ('[Received] intent: {}'.format(intent_message.asr_tokens))
     #print ('[Received] intent: {}'.format(intent_message.asr_confidence))
 
