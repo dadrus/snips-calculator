@@ -33,7 +33,8 @@ def subscribe_intent_callback(hermes, intent_message):
     action_wrapper(hermes, intent_message, conf)
 
 
-def action_wrapper(hermes, intent_message, conf): 
+def action_wrapper(hermes, intent_message, conf):
+    print ("Intent Message {}".format(intent_message))
     print ("Intent Message {}".format(intent_message.__dict__))
     print ('Intent Message confidence score: {}'.format(intent_message.intent.confidence_score))
     print ('Intent Message intent name: {}'.format(intent_message.intent.intent_name))
