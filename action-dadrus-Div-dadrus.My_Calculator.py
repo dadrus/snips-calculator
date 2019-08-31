@@ -11,7 +11,7 @@ import logging
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
-logger = logging.getLogger('div')
+_LOGGER = logging.getLogger(__name__)
 
 class SnipsConfigParser(configparser.SafeConfigParser):
     def to_dict(self):
@@ -33,8 +33,11 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    logger.debug("Simple log message")
-    logger.debug(intentMessage)
+    _LOGGER.debug("Simple debug message")
+    _LOGGER.info("Simple info message")
+    _LOGGER.error("Simple error message")
+    _LOGGER.warn("Simple warn message")
+    _LOGGER.debug(intentMessage)
 
     A = int(intentMessage.slots.NumberOne.first().value)
     B = int(intentMessage.slots.NumberTwo.first().value)
@@ -43,7 +46,7 @@ def action_wrapper(hermes, intentMessage, conf):
     try:
         C = A / B
         result_sentence = "Die Antwort ist: {}".format(str(C))
-    except ZeroDivisonError:
+    except ZeroDivisionError :
         result_sentence = "Division durch 0 ist nicht möglich"
     
     
