@@ -30,6 +30,8 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
+    print(intentMessage)
+
     A = int(intentMessage.slots.NumberOne.first().value)
     B = int(intentMessage.slots.NumberTwo.first().value)
     
