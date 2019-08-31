@@ -48,6 +48,8 @@ def action_wrapper(hermes, intent_message, conf):
             name = slot.slot_name
             confidence = slot.confidence_score
             print("For slot : {}, the confidence is : {}".format(name, confidence))
+            print("Slot {}: ".format(slot))
+        print("For slot : {}, the confidence is : {}".format(intent_message.slots.NumberOne.first().slot_name, intent_message.slots.NumberOne.first().confidence_score))
 
     if intent_message.slots and intent_message.slots['NumberTwo']:
         print ('Intent Message slots 1: {}'.format(intent_message.slots.NumberTwo.__dict__))
