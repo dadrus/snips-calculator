@@ -61,7 +61,10 @@ def action_wrapper(hermes, intent_message, conf):
     print ('Intent Message custom data: {}'.format(intent_message.custom_data))
 
     current_session_id = intent_message.session_id
-    request_count = intent_message.custom_data.request_count or 0
+
+    data = json.loads(intent_message.custom_data)
+
+    request_count = data["request_count"] or 0
     
     if len(intent_message.slots) != 2:
         hermes.publish_continue_session(current_session_id,
@@ -77,14 +80,14 @@ def action_wrapper(hermes, intent_message, conf):
         hermes.publish_continue_session(current_session_id, 
             "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps([request_count, num_two]))
+            json.dumps({request_count, num_two}))
         return
 
     if(num_two[0].confidence_score < 0.8):
         hermes.publish_continue_session(current_session_id,
             "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps([request_count, num_one]))
+            json.dumps({request_count, num_one}))
         return
 
     A = int(num_one.first().value)
