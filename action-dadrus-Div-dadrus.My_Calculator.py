@@ -57,11 +57,6 @@ def action_wrapper(hermes, intent_message, conf):
         print ('Intent Message slots 1: {}'.format(intent_message.slots.NumberTwo.first().__dict__))
     
     print ('Intent Message custom data: {}'.format(intent_message.custom_data))
-    #print ('[Received] intent: {}'.format(intent_message.intent))
-    #print ('[Received] intent: {}'.format(intent_message.intent.intent_name))
-    #print ('[Received] intent: {}'.format(intent_message.intent.confidence_score))
-    #print ('[Received] intent: {}'.format(intent_message.asr_tokens))
-    #print ('[Received] intent: {}'.format(intent_message.asr_confidence))
 
     current_session_id = intent_message.session_id
     
@@ -81,7 +76,7 @@ def action_wrapper(hermes, intent_message, conf):
         return
 
     A = int(num_one.first().value)
-    B = int(num_one.first().value)
+    B = int(num_two.first().value)
     
     result_sentence = ""
     try:
