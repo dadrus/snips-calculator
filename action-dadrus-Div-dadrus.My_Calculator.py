@@ -10,6 +10,7 @@ import logging
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
+INTENT_NAME = "dadrus:Div"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,8 +63,25 @@ def action_wrapper(hermes, intent_message, conf):
     #print ('[Received] intent: {}'.format(intent_message.asr_tokens))
     #print ('[Received] intent: {}'.format(intent_message.asr_confidence))
 
-    A = int(intent_message.slots.NumberOne.first().value)
-    B = int(intent_message.slots.NumberTwo.first().value)
+    current_session_id = intent_message.session_id
+    
+    if len(intent_message.slots) != 2:
+        hermes.publish_continue_session(current_session_id, "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe", INTENT_NAME)
+        return
+
+    num_one = intent_message.slots.NumberOne
+    num_two = intent_message.slots.NumberTwo
+
+    if(num_one[0].confidence_score < 0.8):
+        hermes.publish_continue_session(current_session_id, "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe", INTENT_NAME)
+        return
+
+    if(num_one[1].confidence_score < 0.8):
+        hermes.publish_continue_session(current_session_id, "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe", INTENT_NAME)
+        return
+
+    A = int(num_one.first().value)
+    B = int(num_one.first().value)
     
     result_sentence = ""
     try:
@@ -73,7 +91,6 @@ def action_wrapper(hermes, intent_message, conf):
         result_sentence = "Division durch 0 ist nicht möglich"
     
     
-    current_session_id = intent_message.session_id
     hermes.publish_end_session(current_session_id, result_sentence)
     
 
@@ -81,5 +98,5 @@ def action_wrapper(hermes, intent_message, conf):
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
-        h.subscribe_intent("dadrus:Div", subscribe_intent_callback) \
+        h.subscribe_intent(INTENT_NAME, subscribe_intent_callback) \
          .start()
