@@ -27,22 +27,17 @@ def read_configuration_file(configuration_file):
     except (IOError, configparser.Error) as e:
         return dict()
 
-def subscribe_intent_callback(hermes, intentMessage):
+def subscribe_intent_callback(hermes, intent_message):
     conf = read_configuration_file(CONFIG_INI)
-    action_wrapper(hermes, intentMessage, conf)
+    action_wrapper(hermes, intent_message, conf)
 
 
-def action_wrapper(hermes, intentMessage, conf):
-    _LOGGER.debug("Simple debug message")
-    _LOGGER.info("Simple info message")
-    _LOGGER.error("Simple error message")
-    _LOGGER.warn("Simple warn message")
-    _LOGGER.debug(intentMessage)
+def action_wrapper(hermes, intent_message, conf):
+    print ('[Received] intent: {}'.format(intent_message.intent.intent_name))
+    print ('[Received] intent: {}'.format(intent_message))
 
-    print ('[Received] intent: {}'.format(intentMessage.intent.intent_name))
-
-    A = int(intentMessage.slots.NumberOne.first().value)
-    B = int(intentMessage.slots.NumberTwo.first().value)
+    A = int(intent_message.slots.NumberOne.first().value)
+    B = int(intent_message.slots.NumberTwo.first().value)
     
     result_sentence = ""
     try:
@@ -52,7 +47,7 @@ def action_wrapper(hermes, intentMessage, conf):
         result_sentence = "Division durch 0 ist nicht möglich"
     
     
-    current_session_id = intentMessage.session_id
+    current_session_id = intent_message.session_id
     hermes.publish_end_session(current_session_id, result_sentence)
     
 
