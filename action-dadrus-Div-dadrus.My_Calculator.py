@@ -34,11 +34,16 @@ def subscribe_intent_callback(hermes, intent_message):
 
 def action_wrapper(hermes, intent_message, conf): 
     print ("Intent Message {}".format(intent_message.__dict__))
-    print ('Intent Message intent: {}'.format(intent_message.intent.__dict__))
-    print ('Intent Message slots: {}'.format(intent_message.slots.__dict__))
+    print ('Intent Message confidence score: {}'.format(intent_message.intent.confidence_score))
+    print ('Intent Message intent name: {}'.format(intent_message.intent.intent_name))
     print ('Intent Message site id: {}'.format(intent_message.site_id))
     print ('Intent Message session id: {}'.format(intent_message.session_id))
     print ('Intent Message input: {}'.format(intent_message.input))
+    print ('Intent Message slots: {}'.format(intent_message.slots.__dict__))
+    if intent_message.slots:
+        print ('Intent Message slots 0: {}'.format(intent_message.slots[0].__dict__))
+        print ('Intent Message slots 1: {}'.format(intent_message.slots[1].__dict__))
+    
     print ('Intent Message custom data: {}'.format(intent_message.custom_data))
     #print ('[Received] intent: {}'.format(intent_message.intent))
     #print ('[Received] intent: {}'.format(intent_message.intent.intent_name))
