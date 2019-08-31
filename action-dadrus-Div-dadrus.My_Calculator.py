@@ -69,11 +69,17 @@ def action_wrapper(hermes, intent_message, conf):
     num_two = intent_message.slots.NumberTwo
 
     if(num_one[0].confidence_score < 0.8):
-        hermes.publish_continue_session(current_session_id, "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe", [INTENT_NAME])
+        hermes.publish_continue_session(current_session_id, 
+            "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
+            [INTENT_NAME],
+            custom_data = num_one)
         return
 
     if(num_two[0].confidence_score < 0.8):
-        hermes.publish_continue_session(current_session_id, "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe", [INTENT_NAME])
+        hermes.publish_continue_session(current_session_id,
+        "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
+        [INTENT_NAME],
+        custom_data = num_one)
         return
 
     A = int(num_one.first().value)
