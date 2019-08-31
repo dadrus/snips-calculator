@@ -62,26 +62,39 @@ def action_wrapper(hermes, intent_message, conf):
     if request_count > 3:
         hermes.publish_end_session(current_session_id, "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
         return
+
+    a = 0
+    b = 0
+    a_confidence_score = 0.0
+    b_confidence_score = 0.0
+
+    if 'a' in interaction_data:
+        a = interaction_data['a']
+        a_confidence_score = interaction_data['a_confidence_score']
+
+    if 'b' in interaction_data:
+        a = interaction_data['b']
+        a_confidence_score = interaction_data['b_confidence_score']
     
-    if len(intent_message.slots) != 2:
+    if len(intent_message.slots) != 2 and not interaction_data:
         hermes.publish_continue_session(current_session_id,
             "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
             json.dumps(interaction_data))
         return
 
-    a = int(intent_message.slots.NumberOne.first().value)
-    b = int(intent_message.slots.NumberTwo.first().value)
+    a = a or int(intent_message.slots.NumberOne.first().value)
+    b = b or int(intent_message.slots.NumberTwo.first().value)
 
-    a_confidence_score = intent_message.slots.NumberOne[0].confidence_score
-    b_confidence_score = intent_message.slots.NumberTwo[0].confidence_score
+    a_confidence_score = a_confidence_score or intent_message.slots.NumberOne[0].confidence_score
+    b_confidence_score = b_confidence_score or intent_message.slots.NumberTwo[0].confidence_score
 
     if(a_confidence_score < 0.8):
         interaction_data['request_count'] = request_count + 1
         interaction_data['b'] = b
         interaction_data['b_confidence_score'] = b_confidence_score
         hermes.publish_continue_session(current_session_id, 
-            "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
+            "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die erste Zahl",
             [INTENT_NAME],
             json.dumps(interaction_data))
         return
@@ -91,7 +104,7 @@ def action_wrapper(hermes, intent_message, conf):
         interaction_data['a'] = a
         interaction_data['a_confidence_score'] = a_confidence_score
         hermes.publish_continue_session(current_session_id,
-            "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
+            "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die zweite Zahl",
             [INTENT_NAME],
             json.dumps(interaction_data))
         return
