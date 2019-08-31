@@ -71,30 +71,32 @@ def action_wrapper(hermes, intent_message, conf):
             json.dumps({request_count}))
         return
 
-    num_one = intent_message.slots.NumberOne
-    num_two = intent_message.slots.NumberTwo
+    a = int(intent_message.slots.NumberOne.first().value)
+    b = int(intent_message.slots.NumberTwo.first().value)
 
-    if(num_one[0].confidence_score < 0.8):
+    a_confidence_score = intent_message.slots.NumberOne[0].confidence_score
+    b_confidence_score = intent_message.slots.NumberTwo[0].confidence_score
+
+    if(a_confidence_score < 0.8):
         hermes.publish_continue_session(current_session_id, 
             "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count, num_two}))
+            json.dumps({request_count, a, a_confidence_score}))
         return
 
-    if(num_two[0].confidence_score < 0.8):
+    if(b_confidence_score < 0.8):
         hermes.publish_continue_session(current_session_id,
             "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count, num_one}))
+            json.dumps({request_count, b, b_confidence_score}))
         return
 
-    A = int(num_one.first().value)
-    B = int(num_two.first().value)
+    
     
     result_sentence = ""
     try:
-        C = A / B
-        result_sentence = "Die Antwort ist: {}".format(str(C))
+        result = a / b
+        result_sentence = "Die Antwort ist: {}".format(str(result))
     except ZeroDivisionError :
         result_sentence = "Division durch 0 ist nicht möglich"
     
