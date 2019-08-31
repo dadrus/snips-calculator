@@ -35,29 +35,17 @@ def subscribe_intent_callback(hermes, intent_message):
 
 
 def action_wrapper(hermes, intent_message, conf):
-    print ("Intent Message {}".format(intent_message))
-    print ("Intent Message {}".format(intent_message.__dict__))
     print ('Intent Message confidence score: {}'.format(intent_message.intent.confidence_score))
     print ('Intent Message intent name: {}'.format(intent_message.intent.intent_name))
     print ('Intent Message site id: {}'.format(intent_message.site_id))
     print ('Intent Message session id: {}'.format(intent_message.session_id))
     print ('Intent Message input: {}'.format(intent_message.input))
-    print ('Intent Message slots: {}'.format(intent_message.slots.__dict__))
     if intent_message.slots and intent_message.slots['NumberOne']:
-        print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.__dict__))
-        print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.first().__dict__))
-        print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.all()))
-        for slot in intent_message.slots.NumberOne:
-            name = slot.slot_name
-            confidence = slot.confidence_score
-            print("For slot : {}, the confidence is : {}".format(name, confidence))
-            print("Slot {}: ".format(slot))
         print("For slot : {}, the confidence is : {}".format(intent_message.slots.NumberOne[0].slot_name, intent_message.slots.NumberOne[0].confidence_score))
 
     if intent_message.slots and intent_message.slots['NumberTwo']:
-        print ('Intent Message slots 1: {}'.format(intent_message.slots.NumberTwo.__dict__))
-        print ('Intent Message slots 1: {}'.format(intent_message.slots.NumberTwo.first().__dict__))
-    
+        print("For slot : {}, the confidence is : {}".format(intent_message.slots.NumberTwo[0].slot_name, intent_message.slots.NumberTwo[0].confidence_score))
+
     print ('Intent Message custom data: {}'.format(intent_message.custom_data))
 
     current_session_id = intent_message.session_id
@@ -68,7 +56,7 @@ def action_wrapper(hermes, intent_message, conf):
         hermes.publish_continue_session(current_session_id,
             "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count}))
+            {request_count})
         return
 
     a = int(intent_message.slots.NumberOne.first().value)
@@ -81,14 +69,14 @@ def action_wrapper(hermes, intent_message, conf):
         hermes.publish_continue_session(current_session_id, 
             "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count, a, a_confidence_score}))
+            {request_count, a, a_confidence_score})
         return
 
     if(b_confidence_score < 0.8):
         hermes.publish_continue_session(current_session_id,
             "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count, b, b_confidence_score}))
+            {request_count, b, b_confidence_score})
         return
 
     
