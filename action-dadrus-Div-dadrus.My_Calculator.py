@@ -62,15 +62,13 @@ def action_wrapper(hermes, intent_message, conf):
 
     current_session_id = intent_message.session_id
 
-    data = json.loads(intent_message.custom_data)
-
-    request_count = data["request_count"] or 0
+    request_count = 0
     
     if len(intent_message.slots) != 2:
         hermes.publish_continue_session(current_session_id,
             "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps([request_count]))
+            json.dumps({request_count}))
         return
 
     num_one = intent_message.slots.NumberOne
