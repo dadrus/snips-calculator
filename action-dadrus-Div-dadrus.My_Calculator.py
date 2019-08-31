@@ -50,13 +50,20 @@ def action_wrapper(hermes, intent_message, conf):
 
     current_session_id = intent_message.session_id
 
-    request_count = 0
+    interaction_data = {}
+    if(intent_message.custom_data):
+        interaction_data = json.loads(intent_message.custom_data)
+
+    request_count = interaction_data['request_count'] or 0
+    if request_count > 3:
+        hermes.publish_end_session(current_session_id, "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
+        return
     
     if len(intent_message.slots) != 2:
         hermes.publish_continue_session(current_session_id,
             "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count}))
+            json.dumps(interaction_data))
         return
 
     a = int(intent_message.slots.NumberOne.first().value)
@@ -66,17 +73,23 @@ def action_wrapper(hermes, intent_message, conf):
     b_confidence_score = intent_message.slots.NumberTwo[0].confidence_score
 
     if(a_confidence_score < 0.8):
+        interaction_data['request_count'] = request_count + 1
+        interaction_data['b'] = b
+        interaction_data['b_confidence_score'] = b_confidence_score
         hermes.publish_continue_session(current_session_id, 
             "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count, a, float(a_confidence_score)}))
+            json.dumps(interaction_data))
         return
 
     if(b_confidence_score < 0.8):
+        interaction_data['request_count'] = request_count + 1
+        interaction_data['a'] = a
+        interaction_data['a_confidence_score'] = a_confidence_score
         hermes.publish_continue_session(current_session_id,
             "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die Aufgabe",
             [INTENT_NAME],
-            json.dumps({request_count, b, float(b_confidence_score)}))
+            json.dumps(interaction_data))
         return
 
     
