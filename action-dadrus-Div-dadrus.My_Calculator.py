@@ -43,7 +43,7 @@ def action_wrapper(hermes, intent_message, conf):
     if intent_message.slots and intent_message.slots['NumberOne']:
         print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.__dict__))
         print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.first().__dict__))
-        print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.all().__dict__))
+        print ('Intent Message slots 0: {}'.format(intent_message.slots.NumberOne.all()))
 
     if intent_message.slots and intent_message.slots['NumberTwo']:
         print ('Intent Message slots 1: {}'.format(intent_message.slots.NumberTwo.__dict__))
