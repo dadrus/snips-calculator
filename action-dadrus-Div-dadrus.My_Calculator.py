@@ -33,9 +33,13 @@ def action_wrapper(hermes, intentMessage, conf):
     A = int(intentMessage.slots.NumberOne.first().value)
     B = int(intentMessage.slots.NumberTwo.first().value)
     
-    C = A / B
+    result_sentence = ""
+    try:
+        C = A / B
+        result_sentence = "Die Antwort ist: {}".format(str(C))
+    except ZeroDivisonError:
+        result_sentence = "Division durch 0 ist nicht möglich"
     
-    result_sentence = "Die Antwort ist: {}".format(str(C))
     
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, result_sentence)
