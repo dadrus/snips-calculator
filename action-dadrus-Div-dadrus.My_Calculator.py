@@ -85,14 +85,14 @@ def action_wrapper(hermes, intent_message, conf):
     print(todict( intent_message))
     
     interaction_data = json.loads(intent_message.custom_data) if intent_message.custom_data else {}
-    request_count = interaction_data.get('request_count', 0)
+    request_count = interaction_data.get("request_count", 0)
     request_count += 1
-    interaction_data['request_count'] = request_count
+    interaction_data["request_count"] = request_count
     
-    a = interaction_data.get('a', 0)
-    b = interaction_data.get('b', 0)
-    a_confidence_score = interaction_data.get('a_confidence_score', 0.0)
-    b_confidence_score = interaction_data.get('b_confidence_score', 0.0)
+    a = interaction_data.get("a", 0)
+    b = interaction_data.get("b", 0)
+    a_confidence_score = interaction_data.get("a_confidence_score", 0.0)
+    b_confidence_score = interaction_data.get("b_confidence_score", 0.0)
 
     if request_count > request_count_threshold:
         hermes.publish_end_session(intent_message.session_id, "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
@@ -112,21 +112,23 @@ def action_wrapper(hermes, intent_message, conf):
     b_confidence_score = b_confidence_score or intent_message.slots.NumberTwo[0].confidence_score
 
     if(a_confidence_score < confidence_score_threshold):
-        interaction_data['b'] = b
-        interaction_data['b_confidence_score'] = b_confidence_score
+        interaction_data["b"] = b
+        interaction_data["b_confidence_score"] = b_confidence_score
         hermes.publish_continue_session(intent_message.session_id, 
             "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die erste Zahl",
             [INTENT_NAME],
-            json.dumps(interaction_data))
+            json.dumps(interaction_data),
+            slot_to_fill = "NumberOne")
         return
 
     if(b_confidence_score < confidence_score_threshold):
-        interaction_data['a'] = a
-        interaction_data['a_confidence_score'] = a_confidence_score
+        interaction_data["a"] = a
+        interaction_data["a_confidence_score"] = a_confidence_score
         hermes.publish_continue_session(intent_message.session_id,
             "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die zweite Zahl",
             [INTENT_NAME],
-            json.dumps(interaction_data))
+            json.dumps(interaction_data),
+            slot_to_fill = "NumberTwo")
         return
     
     result_sentence = ""
