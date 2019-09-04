@@ -41,7 +41,9 @@ def test_dialogue_is_aborted_when_request_count_is_above_3(test_config, test_int
     module.action_wrapper(hermes, test_intent, test_config)
 
     # then
-    hermes.publish_end_session.assert_called_once_with(test_intent.session_id, "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
+    hermes.publish_end_session.assert_called_once_with(
+        test_intent.session_id,
+        "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
     hermes.publish_continue_session.assert_not_called()
 
 
@@ -57,7 +59,9 @@ def test_dialogue_is_continued_if_the_amount_of_the_recognized_slots_is_zero(tes
     hermes.publish_continue_session.assert_called_once_with(
         test_intent.session_id,
         "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
-        [module.INTENT_NAME], json.dumps({ "request_count": 1 }))
+        [module.INTENT_NAME], 
+        json.dumps({ "request_count": 1 }),
+        slot_to_fill = None)
 
     
 def test_dialogue_is_continued_if_the_amount_of_the_recognized_slots_is_one(test_config, test_intent):
@@ -76,7 +80,9 @@ def test_dialogue_is_continued_if_the_amount_of_the_recognized_slots_is_one(test
     hermes.publish_continue_session.assert_called_once_with(
         test_intent.session_id,
         "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
-        [module.INTENT_NAME], json.dumps({ "request_count": 1 }))
+        [module.INTENT_NAME], 
+        json.dumps({ "request_count": 1 }),
+        slot_to_fill = None)
 
 
 def test_first_number_is_requested_again_if_the_confidence_score_is_less_then_the_configured_threshold(test_config, test_intent):
@@ -102,8 +108,8 @@ def test_first_number_is_requested_again_if_the_confidence_score_is_less_then_th
         test_intent.session_id,
         "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die erste Zahl",
         [module.INTENT_NAME],
-        json.dumps({ "request_count": 1, "b": val2.value, "b_confidence_score": val2_confidence_score })
-        )
+        json.dumps({ "request_count": 1, "b": val2.value, "b_confidence_score": val2_confidence_score }),
+        slot_to_fill = "NumberOne")
 
 
 def test_second_number_is_requested_again_if_the_confidence_score_is_less_then_the_configured_threshold(test_config, test_intent):
@@ -129,8 +135,8 @@ def test_second_number_is_requested_again_if_the_confidence_score_is_less_then_t
         test_intent.session_id,
         "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die zweite Zahl",
         [module.INTENT_NAME],
-        json.dumps({ "request_count": 1, "a": val1.value, "a_confidence_score": val1_confidence_score })
-        )
+        json.dumps({ "request_count": 1, "a": val1.value, "a_confidence_score": val1_confidence_score }),
+        slot_to_fill = "NumberTwo")
 
     
 def test_successful_division(test_config, test_intent):
@@ -163,5 +169,7 @@ def test_division_by_zero(test_config, test_intent):
     module.action_wrapper(hermes, test_intent, test_config)
 
     # then
-    hermes.publish_end_session.assert_called_once_with(test_intent.session_id, "Division durch 0 ist nicht möglich")
+    hermes.publish_end_session.assert_called_once_with(
+        test_intent.session_id, 
+        "Division durch 0 ist nicht möglich")
     hermes.publish_continue_session.assert_not_called()

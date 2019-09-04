@@ -39,24 +39,12 @@ def todict(obj):
     return todict(dict((name, getattr(obj, name)) for name in getattr(obj, '__slots__')))
   return obj
 
-
-
-def list_object_to_dict(lst):
-    return_list = []
-    for l in lst:
-        return_list.append(object_to_dict(l))
-    return return_list
-
-def object_to_dict(object):
-    dict = vars(object)
-    for k,v in dict.items():
-        if type(v).__name__ not in ['list', 'dict', 'str', 'int', 'float']:
-                dict[k] = object_to_dict(v)
-        if type(v) is list:
-            dict[k] = list_object_to_dict(v)
-    return dict
-
-
+MSG_GIVE_UP = "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen"
+MSG_DONT_UNDERSTAND = "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe"
+MSG_NR1_AGAIN = "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die erste Zahl"
+MSG_NR2_AGAIN = "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die zweite Zahl"
+MSG_POSITIVE_ANSWER = "Die Antwort ist: {}"
+MSG_ZERO_DIVISION = "Division durch 0 ist nicht möglich"
 
 class SnipsConfigParser(configparser.SafeConfigParser):
     def to_dict(self):
@@ -93,17 +81,14 @@ def action_wrapper(hermes, intent_message, conf):
     b = interaction_data.get("b", 0)
     a_confidence_score = interaction_data.get("a_confidence_score", 0.0)
     b_confidence_score = interaction_data.get("b_confidence_score", 0.0)
-
-    if request_count > request_count_threshold:
-        hermes.publish_end_session(intent_message.session_id, "Ich muss aufgeben. Ich kann dich überhaupt nicht verstehen")
-        return
     
     if len(intent_message.slots) != 2 and len(interaction_data) == 1:
-        hermes.publish_continue_session(intent_message.session_id,
-            "Ich habe dich nicht verstanden. Wiederhole bitte die Aufgabe",
+        return continue_or_give_up_if(
+            request_count > request_count_threshold, hermes,
+            intent_message.session_id,
+            MSG_DONT_UNDERSTAND,
             [INTENT_NAME],
             json.dumps(interaction_data))
-        return
 
     a = a or int(intent_message.slots.NumberOne.first().value)
     b = b or int(intent_message.slots.NumberTwo.first().value)
@@ -114,32 +99,41 @@ def action_wrapper(hermes, intent_message, conf):
     if(a_confidence_score < confidence_score_threshold):
         interaction_data["b"] = b
         interaction_data["b_confidence_score"] = b_confidence_score
-        hermes.publish_continue_session(intent_message.session_id, 
-            "Ich habe die erste Zahl nicht verstanden. Wiederhole bitte die erste Zahl",
+        return continue_or_give_up_if(
+            request_count > request_count_threshold, hermes,
+            intent_message.session_id,
+            MSG_NR1_AGAIN,
             [INTENT_NAME],
             json.dumps(interaction_data),
             slot_to_fill = "NumberOne")
-        return
 
     if(b_confidence_score < confidence_score_threshold):
         interaction_data["a"] = a
         interaction_data["a_confidence_score"] = a_confidence_score
-        hermes.publish_continue_session(intent_message.session_id,
-            "Ich habe die zweite Zahl nicht verstanden. Wiederhole bitte die zweite Zahl",
+        return continue_or_give_up_if(
+            request_count > request_count_threshold, hermes,
+            intent_message.session_id,
+            MSG_NR2_AGAIN,
             [INTENT_NAME],
             json.dumps(interaction_data),
             slot_to_fill = "NumberTwo")
-        return
     
     result_sentence = ""
     try:
         result = a / b
-        result_sentence = "Die Antwort ist: {}".format(str(result))
+        result_sentence = MSG_POSITIVE_ANSWER.format(str(result))
     except ZeroDivisionError :
-        result_sentence = "Division durch 0 ist nicht möglich"
+        result_sentence = MSG_ZERO_DIVISION
     
     hermes.publish_end_session(intent_message.session_id, result_sentence)
     
+def continue_or_give_up_if(test, hermes, session_id, message, intent_filter, custom_data, slot_to_fill = None):
+    if test:
+        hermes.publish_end_session(session_id, MSG_GIVE_UP)
+    else:
+        hermes.publish_continue_session(session_id, message, intent_filter, custom_data, slot_to_fill = slot_to_fill)
+    return None
+
 def session_started(hermes, started_message):
     print("session_started")
     print(todict(started_message))
