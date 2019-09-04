@@ -138,13 +138,13 @@ def action_wrapper(hermes, intent_message, conf):
     hermes.publish_end_session(intent_message.session_id, result_sentence)
     
 def session_started(hermes, started_message):
-    print(todict(intent_message))
+    print(todict(started_message))
 
 def session_queued(hermes, queued_message):
-    print(todict(intent_message))
+    print(todict(queued_message))
 
 def session_ended(hermes, ended_message):
-    print(todict(intent_message))
+    print(todict(ended_message))
 
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()
