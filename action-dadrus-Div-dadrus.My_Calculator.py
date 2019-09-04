@@ -78,6 +78,7 @@ def subscribe_intent_callback(hermes, intent_message):
 
 
 def action_wrapper(hermes, intent_message, conf):
+    print("action_wrapper")
     request_count_threshold = conf.get("global").get("request_count_threshold", 3)
     confidence_score_threshold = conf.get("global").get("confidence_score_threshold", 0.8)
     
@@ -138,12 +139,15 @@ def action_wrapper(hermes, intent_message, conf):
     hermes.publish_end_session(intent_message.session_id, result_sentence)
     
 def session_started(hermes, started_message):
+    print("session_started")
     print(todict(started_message))
 
 def session_queued(hermes, queued_message):
+    print("session_queued")
     print(todict(queued_message))
 
 def session_ended(hermes, ended_message):
+    print("session_ended")
     print(todict(ended_message))
 
 if __name__ == "__main__":
